@@ -30,12 +30,6 @@ func isAuthorizedToken(token string) bool {
 	return false
 }
 
-type defineRequest struct {
-	Text    string
-	Token   string
-	Trigger string
-}
-
 type Term string
 
 func (t Term) Raw() string {
@@ -54,32 +48,31 @@ type slackResponse struct {
 
 func defineHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		w.WriteHeader(405)
-		fmt.Fprint(w, "only POST requests supported")
+		http.Error(w, "only POST requests supported", 405)
 		return
 	}
+
 	err := r.ParseForm()
 	if err != nil {
-		fmt.Fprintf(w, "something is bad with your data: %s", err)
+		http.Error(w, fmt.Sprintf("something is bad with your data: %s", err), 400)
 		return
 	}
-	data := defineRequest{
-		Token:   r.FormValue("token"),
-		Text:    r.FormValue("text"),
-		Trigger: r.FormValue("trigger_word"),
+
+	token := r.FormValue("token")
+	text := r.FormValue("text")
+
+	if !isAuthorizedToken(token) {
+		http.Error(w, "not authorized", 403)
+		return
 	}
+	t := Term(text)
+
 	// Make request to dictionary site
-	if !isAuthorizedToken(data.Token) {
-		w.WriteHeader(403)
-		fmt.Fprint(w, "not authorized")
-		return
-	}
-	t := Term(data.Text)
 	log.Printf("Going to search for %s\n", t)
 	dictURL := fmt.Sprintf("https://en.oxforddictionaries.com/definition/%s", t)
 	resp, err := soup.Get(dictURL)
 	if err != nil {
-		w.Write([]byte(fmt.Sprintf("error: %s\n", err)))
+		http.Error(w, fmt.Sprintf("error: %s\n", err), 400)
 		return
 	}
 	doc := soup.HTMLParse(resp)
@@ -98,7 +91,7 @@ func defineHandler(w http.ResponseWriter, r *http.Request) {
 		o += fmt.Sprintf("\n_Brought to you by <%s|English Oxford Dictionaries>_", dictURL)
 	}
 	if len(defs) == 0 {
-		o = fmt.Sprintf("Couldn't find anything for %s!", data.Text)
+		o = fmt.Sprintf("Couldn't find anything for %s!", text)
 	}
 
 	json.NewEncoder(w).Encode(slackResponse{Text: o})
