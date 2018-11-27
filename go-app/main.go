@@ -77,6 +77,10 @@ func defineHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	doc := soup.HTMLParse(resp)
 	main := doc.Find("section", "class", "gramb")
+	if main.Error != nil {
+		renderResponse(w, fmt.Sprintf("No results for %s", t.Raw()))
+		return
+	}
 	defs := main.FindAll("span", "class", "ind")
 	grammar := main.Find("span", "class", "pos")
 
@@ -90,11 +94,15 @@ func defineHandler(w http.ResponseWriter, r *http.Request) {
 		o = fmt.Sprintf("Definitions for *%s* - _%s_\n\n", t.Raw(), grammar.Text()) + o
 		o += fmt.Sprintf("\n_Brought to you by <%s|English Oxford Dictionaries>_", dictURL)
 	}
-	if len(defs) == 0 {
-		o = fmt.Sprintf("Couldn't find anything for %s!", text)
-	}
 
-	json.NewEncoder(w).Encode(slackResponse{Text: o})
+	renderResponse(w, o)
+}
+
+func renderResponse(w http.ResponseWriter, o string) {
+	err := json.NewEncoder(w).Encode(slackResponse{Text: o})
+	if err != nil {
+		http.Error(w, fmt.Sprintf("not sure what happened: %s", err), 400)
+	}
 }
 
 func main() {
