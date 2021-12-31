@@ -3,7 +3,7 @@ package definer
 import (
 	"fmt"
 	"log"
-	"responder/go-app/term"
+	"responder/go-app/internal/term"
 
 	"github.com/anaskhan96/soup"
 )

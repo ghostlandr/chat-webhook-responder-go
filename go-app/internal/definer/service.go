@@ -1,6 +1,6 @@
 package definer
 
-import "responder/go-app/term"
+import "responder/go-app/internal/term"
 
 type service struct {
 	repo repo

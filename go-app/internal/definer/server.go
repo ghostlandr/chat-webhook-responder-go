@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"responder/go-app/tokens"
+	"responder/go-app/internal/tokens"
 	"strings"
 
 	"github.com/slack-go/slack"
@@ -59,11 +59,11 @@ func (s server) ServeDefinerRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// fmt.Fprintf(w, o)
 	renderResponse(w, o)
 }
 
 func renderResponse(w http.ResponseWriter, o string) {
+	w.Header().Add("Content-Type", "application/json")
 	err := json.NewEncoder(w).Encode(inChannelMarkdown(o))
 	if err != nil {
 		http.Error(w, fmt.Sprintf("not sure what happened: %s", err), 400)
@@ -102,5 +102,5 @@ type textBlock struct {
 type slackResponse struct {
 	Blocks       []block `json:"blocks,omitempty"`
 	Text         string  `json:"text,omitempty"`
-	ResponseType string  `json:"response_type"`
+	ResponseType string  `json:"response_type,omitempty"`
 }
