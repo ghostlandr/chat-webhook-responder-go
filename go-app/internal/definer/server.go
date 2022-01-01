@@ -1,9 +1,9 @@
 package definer
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
+	"responder/go-app/internal/response"
 	"responder/go-app/internal/tokens"
 	"strings"
 
@@ -54,53 +54,10 @@ func (s server) ServeDefinerRequest(w http.ResponseWriter, r *http.Request) {
 		if strings.HasPrefix(errStr, "error") {
 			http.Error(w, errStr, 400)
 		} else if strings.HasPrefix(errStr, "no results") {
-			renderResponse(w, errStr)
+			response.RenderStringInChannel(w, errStr)
 		}
 		return
 	}
 
-	renderResponse(w, o)
-}
-
-func renderResponse(w http.ResponseWriter, o string) {
-	w.Header().Add("Content-Type", "application/json")
-	err := json.NewEncoder(w).Encode(inChannelMarkdown(o))
-	if err != nil {
-		http.Error(w, fmt.Sprintf("not sure what happened: %s", err), 400)
-	}
-}
-
-// slackResponse{Text: o, ResponseType: "in_channel"}
-
-func inChannelMarkdown(o string) interface{} {
-	return slackResponse{
-		ResponseType: "in_channel",
-		Blocks: []block{
-			{
-				Type: "section",
-				Text: textBlock{
-					Type: "mrkdwn",
-					Text: o,
-				},
-				BlockID: "definition",
-			},
-		},
-	}
-}
-
-type block struct {
-	Type    string    `json:"type"`
-	Text    textBlock `json:"text"`
-	BlockID string    `json:"block_id"`
-}
-
-type textBlock struct {
-	Type string `json:"type"`
-	Text string `json:"text"`
-}
-
-type slackResponse struct {
-	Blocks       []block `json:"blocks,omitempty"`
-	Text         string  `json:"text,omitempty"`
-	ResponseType string  `json:"response_type,omitempty"`
+	response.RenderResponse(w, response.New(o).InChannel())
 }
