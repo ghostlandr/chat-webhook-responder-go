@@ -6,13 +6,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestStringJoinsOnHyphen(t *testing.T) {
-	ter := Term("define: just long things")
-	want := "just-long-things"
-	got := ter.String()
-	assert.Equal(t, want, got, "String() should join term on hyphens")
-}
-
 func TestString(t *testing.T) {
 	tests := []struct {
 		name string

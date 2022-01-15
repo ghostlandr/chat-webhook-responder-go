@@ -51,6 +51,8 @@ func (s server) ServeUrbanDefinerRequest(w http.ResponseWriter, r *http.Request)
 			http.Error(w, errStr, 400)
 		} else if strings.HasPrefix(errStr, "no results") {
 			response.RenderStringPrivately(w, fmt.Sprintf("No results found for %v", text))
+		} else {
+			response.RenderStringPrivately(w, fmt.Sprintf("Something went wrong trying to search for %v", text))
 		}
 		return
 	}

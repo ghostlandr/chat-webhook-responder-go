@@ -14,6 +14,7 @@ func TestGetDefinitionsFromHTML(t *testing.T) {
 	ud, _ := getDefinitionsFromHTML(soup.Root{Pointer: node})
 	assert.Equal(t, 5, len(ud), "amount of scraped definitions should be 5")
 	expectedFirstDefinition := UrbanDefinition{
+		"1231231231",
 		"Potent weed, usually a sativa, that gives you an energetic high",
 		"\"That butt gave me a crazy head high\"\"I was geeked after smoking butt yesterday\"",
 		"274",
