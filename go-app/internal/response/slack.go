@@ -21,6 +21,10 @@ func RenderStringInChannel(w http.ResponseWriter, s string) {
 	RenderResponse(w, sr)
 }
 
+func RenderStringPrivately(w http.ResponseWriter, s string) {
+	RenderResponse(w, New(s))
+}
+
 // slackResponse{Text: o, ResponseType: "in_channel"}
 
 type SlackResponse interface {

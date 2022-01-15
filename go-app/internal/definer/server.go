@@ -54,10 +54,10 @@ func (s server) ServeDefinerRequest(w http.ResponseWriter, r *http.Request) {
 		if strings.HasPrefix(errStr, "error") {
 			http.Error(w, errStr, 400)
 		} else if strings.HasPrefix(errStr, "no results") {
-			response.RenderStringInChannel(w, errStr)
+			response.RenderStringPrivately(w, errStr)
 		}
 		return
 	}
 
-	response.RenderResponse(w, response.New(o).InChannel())
+	response.RenderStringInChannel(w, o)
 }
