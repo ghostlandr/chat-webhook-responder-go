@@ -1,1 +1,5 @@
 .idea/*
+.exe
+
+# Create this file and make sure it has a var with signingSecret inside
+private_config.go
