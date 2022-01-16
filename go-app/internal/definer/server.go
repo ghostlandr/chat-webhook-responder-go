@@ -51,6 +51,7 @@ func (s server) ServeDefinerRequest(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		// log
 		errStr := fmt.Sprintf("%v", err)
+		s.logger.Printf("error handling define request: %s", errStr)
 		if strings.HasPrefix(errStr, "error") {
 			http.Error(w, errStr, 400)
 		} else if strings.HasPrefix(errStr, "no results") {

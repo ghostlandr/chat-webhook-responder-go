@@ -30,7 +30,7 @@ func main() {
 	}
 	defer client.Close()
 
-	logger := client.Logger("something").StandardLogger(logging.Info)
+	logger := client.Logger("chat-webhook-responder-go").StandardLogger(logging.Info)
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/define", checkVerification(definer.New(logger).ServeDefinerRequest, define))
