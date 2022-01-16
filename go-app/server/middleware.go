@@ -4,18 +4,20 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"responder/go-app/internal/config"
+	"responder/go-app/internal/tokens"
 
 	"github.com/slack-go/slack"
 )
 
-func checkVerification(fn http.HandlerFunc, definerType definers) http.HandlerFunc {
+func checkVerification(fn http.HandlerFunc, definerType tokens.Definers) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var signingSecret string
 		switch definerType {
-		case define:
-			signingSecret = definesigningSecret
-		case udefine:
-			signingSecret = udefineSigningSecret
+		case tokens.Define:
+			signingSecret = config.DefineSigningSecret
+		case tokens.Udefine:
+			signingSecret = config.UdefineSigningSecret
 		}
 		verifier, err := slack.NewSecretsVerifier(r.Header, signingSecret)
 		if err != nil {
