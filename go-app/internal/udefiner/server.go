@@ -3,6 +3,7 @@ package udefiner
 import (
 	"fmt"
 	"net/http"
+	"responder/go-app/internal/logs"
 	"responder/go-app/internal/response"
 	"responder/go-app/internal/tokens"
 	"strings"
@@ -12,10 +13,10 @@ import (
 
 type server struct {
 	service Service
-	logger  Logger
+	logger  logs.Logger
 }
 
-func New(l Logger) UrbanDefiner {
+func New(l logs.Logger) UrbanDefiner {
 	return server{newService(), l}
 }
 

@@ -3,6 +3,7 @@ package definer
 import (
 	"fmt"
 	"net/http"
+	"responder/go-app/internal/logs"
 	"responder/go-app/internal/response"
 	"responder/go-app/internal/tokens"
 	"strings"
@@ -15,15 +16,11 @@ type DefinerServer interface {
 }
 
 type server struct {
-	logger  Logger
+	logger  logs.Logger
 	service service
 }
 
-type Logger interface {
-	Printf(format string, v ...interface{})
-}
-
-func New(l Logger) DefinerServer {
+func New(l logs.Logger) DefinerServer {
 	return server{logger: l, service: newService()}
 }
 

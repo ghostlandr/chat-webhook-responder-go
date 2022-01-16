@@ -16,7 +16,3 @@ type Service interface {
 type UrbanDefiner interface {
 	ServeUrbanDefinerRequest(w http.ResponseWriter, r *http.Request)
 }
-
-type Logger interface {
-	Printf(format string, v ...interface{})
-}
