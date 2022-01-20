@@ -7,6 +7,7 @@ require (
 	github.com/anaskhan96/soup v1.2.4
 	github.com/slack-go/slack v0.10.1
 	github.com/stretchr/testify v1.6.1
+	golang.org/x/net v0.0.0-20210503060351-7fd8e65b6420
 )
 
 require (
@@ -23,7 +24,6 @@ require (
 	go.opencensus.io v0.23.0 // indirect
 	golang.org/x/lint v0.0.0-20201208152925-83fdc39ff7b5 // indirect
 	golang.org/x/mod v0.4.1 // indirect
-	golang.org/x/net v0.0.0-20210503060351-7fd8e65b6420 // indirect
 	golang.org/x/oauth2 v0.0.0-20210514164344-f6687ab2804c // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/sys v0.0.0-20210503080704-8803ae5d1324 // indirect
