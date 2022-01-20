@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"responder/go-app/internal/logs"
 	"responder/go-app/internal/response"
-	"responder/go-app/internal/tokens"
 	"strings"
 
 	"github.com/slack-go/slack"
@@ -37,12 +36,6 @@ func (s server) ServeUrbanDefinerRequest(w http.ResponseWriter, r *http.Request)
 	text := command.Text
 
 	s.logger.Printf("Going to search for %v with token %v", text, token)
-
-	if !tokens.IsAuthorizedToken(token) {
-		s.logger.Printf("unauthorized request with token %v", token)
-		http.Error(w, "not authorized", http.StatusUnauthorized)
-		return
-	}
 
 	result, err := s.service.GetUrbanDefinerDefinition(text)
 	if err != nil {

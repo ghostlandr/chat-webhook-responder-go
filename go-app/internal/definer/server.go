@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"responder/go-app/internal/logs"
 	"responder/go-app/internal/response"
-	"responder/go-app/internal/tokens"
 	"strings"
 
 	"github.com/slack-go/slack"
@@ -38,11 +37,6 @@ func (s server) ServeDefinerRequest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	s.logger.Printf("receiving parameters: %v, %v", command.Token, command.Text)
-
-	if !tokens.IsAuthorizedToken(command.Token) {
-		http.Error(w, "not authorized", http.StatusUnauthorized)
-		return
-	}
 
 	o, err := s.service.GetDefinerDefinition(command.Text)
 	if err != nil {
