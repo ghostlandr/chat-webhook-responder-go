@@ -1,0 +1,7 @@
+package config
+
+// Copy this file to private_config.go and fill these in, or else the app won't work.
+const DefineSigningSecret string = ""
+const DefinerClientSecret string = ""
+const UdefineSigningSecret string = ""
+const UdefinerClientSecret string = ""
