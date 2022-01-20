@@ -6,6 +6,8 @@ import (
 	"io"
 	"net/http"
 	"responder/go-app/internal/config"
+
+	"github.com/slack-go/slack"
 )
 
 type definers int64
@@ -35,11 +37,13 @@ func checkVerification(fn http.HandlerFunc, definerType definers) http.HandlerFu
 		r.Body.Close()
 		r.Body = io.NopCloser(bytes.NewBuffer(body))
 
-		verifier, err := NewSecretsVerifier(r.Header, signingSecret, string(body[:]))
+		verifier, err := slack.NewSecretsVerifier(r.Header, signingSecret)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
+		// Write the request body to the verifier
+		verifier.Write(body)
 
 		if err = verifier.Ensure(); err != nil {
 			// log.Printf("verification failed, but letting things through for now in testing phase, %v", err)

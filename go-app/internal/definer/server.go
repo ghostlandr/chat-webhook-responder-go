@@ -36,7 +36,7 @@ func (s server) ServeDefinerRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	s.logger.Printf("receiving parameters: %v, %v", command.Token, command.Text)
+	s.logger.Printf("receiving parameters: %v, %v", command.Text)
 
 	o, err := s.service.GetDefinerDefinition(command.Text)
 	if err != nil {

@@ -32,10 +32,9 @@ func (s server) ServeUrbanDefinerRequest(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	token := command.Token
 	text := command.Text
 
-	s.logger.Printf("Going to search for %v with token %v", text, token)
+	s.logger.Printf("Going to search for %v with token %v", text)
 
 	result, err := s.service.GetUrbanDefinerDefinition(text)
 	if err != nil {
