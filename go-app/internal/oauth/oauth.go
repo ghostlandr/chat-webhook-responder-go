@@ -1,4 +1,4 @@
-package tokens
+package oauth
 
 import (
 	"encoding/json"
@@ -9,14 +9,6 @@ import (
 	"responder/go-app/internal/config"
 	"responder/go-app/internal/logs"
 	"strings"
-)
-
-type Definers int64
-
-const (
-	Undefined Definers = iota
-	Define
-	Udefine
 )
 
 var slackAuthURL string = "https://slack.com/oauth/v2/authorize?scope=%s&client_id=%s"
@@ -30,7 +22,7 @@ type OauthHandler interface {
 	ServeUrbanDefinerOauthAuthorizeRequest(w http.ResponseWriter, r *http.Request)
 }
 
-func NewOauthHandler(l logs.Logger) OauthHandler {
+func NewHandler(l logs.Logger) OauthHandler {
 	return oauthHandler{l}
 }
 
