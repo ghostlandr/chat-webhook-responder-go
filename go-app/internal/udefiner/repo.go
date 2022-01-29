@@ -10,7 +10,11 @@ import (
 
 type repo struct{}
 
-func (r repo) GetUrbanDictionaryDefinition(t term.Term) ([]UrbanDefinition, error) {
+func (r repo) GetUrbanDefinerDefinition(t term.Term) ([]UrbanDefinition, error) {
+	return r.getUrbanDictionaryDefinition(t)
+}
+
+func (r repo) getUrbanDictionaryDefinition(t term.Term) ([]UrbanDefinition, error) {
 	dictURL := fmt.Sprintf("https://www.urbandictionary.com/define.php?term=%s", t)
 
 	resp, err := soup.Get(dictURL)

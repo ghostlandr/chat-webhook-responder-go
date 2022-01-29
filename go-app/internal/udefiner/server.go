@@ -3,8 +3,8 @@ package udefiner
 import (
 	"fmt"
 	"net/http"
+	"responder/go-app/internal/logs"
 	"responder/go-app/internal/response"
-	"responder/go-app/internal/tokens"
 	"strings"
 
 	"github.com/slack-go/slack"
@@ -12,10 +12,10 @@ import (
 
 type server struct {
 	service Service
-	logger  Logger
+	logger  logs.Logger
 }
 
-func New(l Logger) UrbanDefiner {
+func New(l logs.Logger) UrbanDefiner {
 	return server{newService(), l}
 }
 
@@ -32,16 +32,9 @@ func (s server) ServeUrbanDefinerRequest(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	token := command.Token
 	text := command.Text
 
-	s.logger.Printf("Going to search for %v with token %v", text, token)
-
-	if !tokens.IsAuthorizedToken(token) {
-		s.logger.Printf("unauthorized request with token %v", token)
-		http.Error(w, "not authorized", http.StatusUnauthorized)
-		return
-	}
+	s.logger.Printf("Going to search for %v with token %v", text)
 
 	result, err := s.service.GetUrbanDefinerDefinition(text)
 	if err != nil {

@@ -3,8 +3,8 @@ package definer
 import (
 	"fmt"
 	"net/http"
+	"responder/go-app/internal/logs"
 	"responder/go-app/internal/response"
-	"responder/go-app/internal/tokens"
 	"strings"
 
 	"github.com/slack-go/slack"
@@ -15,15 +15,11 @@ type DefinerServer interface {
 }
 
 type server struct {
-	logger  Logger
+	logger  logs.Logger
 	service service
 }
 
-type Logger interface {
-	Printf(format string, v ...interface{})
-}
-
-func New(l Logger) DefinerServer {
+func New(l logs.Logger) DefinerServer {
 	return server{logger: l, service: newService()}
 }
 
@@ -40,12 +36,7 @@ func (s server) ServeDefinerRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	s.logger.Printf("receiving parameters: %v, %v", command.Token, command.Text)
-
-	if !tokens.IsAuthorizedToken(command.Token) {
-		http.Error(w, "not authorized", http.StatusUnauthorized)
-		return
-	}
+	s.logger.Printf("receiving parameters: %v, %v", command.Text)
 
 	o, err := s.service.GetDefinerDefinition(command.Text)
 	if err != nil {

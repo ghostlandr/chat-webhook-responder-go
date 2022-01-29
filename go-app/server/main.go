@@ -8,17 +8,10 @@ import (
 	"os"
 
 	"responder/go-app/internal/definer"
+	"responder/go-app/internal/oauth"
 	"responder/go-app/internal/udefiner"
 
 	"cloud.google.com/go/logging"
-)
-
-type definers int64
-
-const (
-	undefined definers = iota
-	define
-	udefine
 )
 
 func main() {
@@ -32,9 +25,13 @@ func main() {
 
 	logger := client.Logger("chat-webhook-responder-go").StandardLogger(logging.Info)
 
+	oauthHandler := oauth.NewHandler(logger)
+
 	mux := http.NewServeMux()
 	mux.HandleFunc("/define", addContext(ctx, checkVerification(definer.New(logger).ServeDefinerRequest, define)))
 	mux.HandleFunc("/udefine", addContext(ctx, checkVerification(udefiner.New(logger).ServeUrbanDefinerRequest, udefine)))
+	mux.HandleFunc("/oauth/define", oauthHandler.ServeDefinerOauthAuthorizeRequest)
+	mux.HandleFunc("/oauth/udefine", oauthHandler.ServeUrbanDefinerOauthAuthorizeRequest)
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"

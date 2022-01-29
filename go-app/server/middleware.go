@@ -1,11 +1,21 @@
 package main
 
 import (
+	"bytes"
 	"context"
-	"log"
+	"io"
 	"net/http"
+	"responder/go-app/internal/config"
 
 	"github.com/slack-go/slack"
+)
+
+type definers int64
+
+const (
+	undefined definers = iota
+	define
+	udefine
 )
 
 func checkVerification(fn http.HandlerFunc, definerType definers) http.HandlerFunc {
@@ -13,20 +23,32 @@ func checkVerification(fn http.HandlerFunc, definerType definers) http.HandlerFu
 		var signingSecret string
 		switch definerType {
 		case define:
-			signingSecret = definesigningSecret
+			signingSecret = config.DefineSigningSecret
 		case udefine:
-			signingSecret = udefineSigningSecret
+			signingSecret = config.UdefineSigningSecret
 		}
+
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		// Reset the body so it can be used in future handlers
+		r.Body.Close()
+		r.Body = io.NopCloser(bytes.NewBuffer(body))
+
 		verifier, err := slack.NewSecretsVerifier(r.Header, signingSecret)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
+		// Write the request body to the verifier
+		verifier.Write(body)
 
 		if err = verifier.Ensure(); err != nil {
-			log.Printf("verification failed, but letting things through for now in testing phase, %v", err)
-			// w.WriteHeader(http.StatusUnauthorized)
-			// return
+			// log.Printf("verification failed, but letting things through for now in testing phase, %v", err)
+			w.WriteHeader(http.StatusUnauthorized)
+			return
 		}
 
 		// If all is well, pass the request along
