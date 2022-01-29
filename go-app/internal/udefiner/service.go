@@ -13,7 +13,7 @@ type service struct {
 func (s service) GetUrbanDefinerDefinition(text string) (string, error) {
 	t := term.Term(text)
 
-	definitions, err := s.repo.GetUrbanDictionaryDefinition(t)
+	definitions, err := s.repo.GetUrbanDefinerDefinition(t)
 
 	if err != nil {
 		return "", err

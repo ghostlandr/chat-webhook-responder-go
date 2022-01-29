@@ -6,7 +6,7 @@ import (
 )
 
 type Repo interface {
-	GetUrbanDictionaryDefinition(t term.Term) ([]UrbanDefinition, error)
+	GetUrbanDefinerDefinition(t term.Term) ([]UrbanDefinition, error)
 }
 
 type Service interface {
